@@ -1,10 +1,14 @@
 package lesson1
 
+import org.apache.http.util.Asserts
 import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.assertThrows
 import util.PerfResult
 import util.estimate
 import java.io.BufferedWriter
 import java.io.File
+import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.math.abs
 import kotlin.system.measureNanoTime
@@ -48,6 +52,27 @@ abstract class AbstractTaskTests : AbstractFileTests() {
         try {
             sortTimes("input/empty.txt", "temp.txt")
             assertFileContent("temp.txt", "")
+        } finally {
+            File("temp.txt").delete()
+        }
+        //My tests:
+        try {
+            assertThrows(IllegalArgumentException::class.java) { sortTimes("input/sortTimesMyTest1", "temp.txt") }
+        } finally {
+            File("temp.txt").delete()
+        }
+
+        try {
+            sortTimes("input/sortTimesMyTest2", "temp.txt")
+            assertFileContent(
+                "temp.txt",
+                """
+                    12:05:01 AM
+                    12:05:01 AM
+                    12:05:01 PM
+                    12:05:01 PM
+                """.trimIndent()
+            )
         } finally {
             File("temp.txt").delete()
         }
@@ -133,6 +158,27 @@ abstract class AbstractTaskTests : AbstractFileTests() {
         try {
             sortTemperatures("input/empty.txt", "temp.txt")
             assertFileContent("temp.txt", "")
+        } finally {
+            File("temp.txt").delete()
+        }
+        //My tests
+        try {
+            sortTemperatures("input/sortTemperaturesMyTest1", "temp.txt")
+            assertFileContent("temp.txt", """Неправильный формат данных: -1000000.0""")
+        } finally {
+            File("temp.txt").delete()
+        }
+
+        try {
+            sortTemperatures("input/sortTemperaturesMyTest2", "temp.txt")
+            assertFileContent(
+                "temp.txt", """
+                100.0
+                100.0
+                100.01
+                100.1
+            """.trimIndent()
+            )
         } finally {
             File("temp.txt").delete()
         }
@@ -298,6 +344,23 @@ abstract class AbstractTaskTests : AbstractFileTests() {
         try {
             sortSequence("input/empty.txt", "temp.txt")
             assertFileContent("temp.txt", "")
+        } finally {
+            File("temp.txt").delete()
+        }
+
+        //My tests
+        try {
+            sortSequence("input/sortSequenceMyTest1", "temp.txt")
+            assertFileContent(
+                "temp.txt", """
+                3
+                3
+                2
+                2
+                1
+                1
+            """.trimIndent()
+            )
         } finally {
             File("temp.txt").delete()
         }

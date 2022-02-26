@@ -1,6 +1,11 @@
 package lesson1;
 
 import kotlin.NotImplementedError;
+import kotlin.Pair;
+
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class JavaTasks {
@@ -37,6 +42,7 @@ public class JavaTasks {
     static public void sortTimes(String inputName, String outputName) {
         throw new NotImplementedError();
     }
+
 
     /**
      * Сортировка адресов
