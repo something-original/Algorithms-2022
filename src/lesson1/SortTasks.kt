@@ -36,34 +36,33 @@ import java.lang.IllegalArgumentException
  *
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
-//Трудоемкость - O(N), ресурсоемкость - O(N)
+//Трудоемкость - O(NlogN), ресурсоемкость - O(N)
 fun sortTimes(inputName: String, outputName: String) {
-    val inputFile = File(inputName)
-    val fileWriter = File(outputName).bufferedWriter()
-    val timesList = mutableListOf<Pair<Int, String>>()
 
-    for (line in inputFile.readLines()) {
-        if (!line.matches(Regex("""((0[0-9]|1[0-2]):[0-5][0-9]:[0-5][0-9]) (AM|PM)"""))) {
-            throw IllegalArgumentException("Неверный формат данных")
-        } else {
-            val list1 = line.split(" ")
-            val list2 = list1[0].split(":").map { it.toInt() }
-            var seconds: Int = if (list1[1] == "AM") {
-                if (list2[0] == 12) 0
-                else list2[0] * 3600
+    File(outputName).bufferedWriter().use { writer ->
+        val timesList = mutableListOf<Pair<Int, String>>()
+        for (line in File(inputName).readLines()) {
+            if (!line.matches(Regex("""((0[0-9]|1[0-2]):[0-5][0-9]:[0-5][0-9]) (AM|PM)"""))) {
+                throw IllegalArgumentException("Неверный формат данных")
             } else {
-                if (list2[0] == 12) list2[0] * 3600
-                else (list2[0] + 12) * 3600
+                val list1 = line.split(" ")
+                val list2 = list1[0].split(":").map { it.toInt() }
+                var seconds: Int = if (list1[1] == "AM") {
+                    if (list2[0] == 12) 0
+                    else list2[0] * 3600
+                } else {
+                    if (list2[0] == 12) list2[0] * 3600
+                    else (list2[0] + 12) * 3600
+                }
+                seconds += (list2[1] * 60 + list2[2])
+                timesList.add(Pair(seconds, line))
             }
-            seconds += (list2[1] * 60 + list2[2])
-            timesList.add(Pair(seconds, line))
+        }
+        timesList.sortBy { it.first }
+        for (pair in timesList) {
+            writer.write(pair.second + "\n")
         }
     }
-    timesList.sortBy { it.first }
-    for (pair in timesList) {
-        fileWriter.write(pair.second + "\n")
-    }
-    fileWriter.close()
 }
 
 /**
@@ -126,27 +125,24 @@ fun sortAddresses(inputName: String, outputName: String) {
  * 99.5
  * 121.3
  */
-//Трудоемкость - O(N), ресурсоемкость - O(1)
+//Трудоемкость - O(NlogN), ресурсоемкость - O(N)
 fun sortTemperatures(inputName: String, outputName: String) {
-    val fileWriter = File(outputName).bufferedWriter()
-    val temperatures = mutableListOf<Double>()
-    for (line in File(inputName).readLines()) {
-        try {
-            val temp = line.toDouble()
-            if (temp >= -273.0 && temp <= 500.0) temperatures.add(temp)
-            else {
-                fileWriter.write("Неправильный формат данных: $line")
-                temperatures.clear()
-                break
+    File(outputName).bufferedWriter().use {
+        val temperatures = mutableListOf<Double>()
+        val x = IllegalArgumentException()
+        for (line in File(inputName).readLines()) {
+            try {
+                val temp = line.toDouble()
+                if (temp >= -273.0 && temp <= 500.0) temperatures.add(temp)
+                else throw x
+            } catch (e: IllegalArgumentException) {
             }
-        } catch (e: IllegalArgumentException) {
+        }
+        val result = temperatures.sorted()
+        for (tmp in result) {
+            it.write(tmp.toString() + "\n")
         }
     }
-    val result = temperatures.sorted()
-    for (tmp in result) {
-        fileWriter.write(tmp.toString() + "\n")
-    }
-    fileWriter.close()
 }
 
 /**
@@ -178,35 +174,35 @@ fun sortTemperatures(inputName: String, outputName: String) {
  * 2
  * 2
  */
-//Трудоемкость - O(N), ресурсоемкость - O(m), где m - кол-во уникальных чисел
+//Трудоемкость - O(N), ресурсоемкость - O(N)
 fun sortSequence(inputName: String, outputName: String) {
 
-    val fileWriter = File(outputName).bufferedWriter()
-    val map = mutableMapOf<String, Int>()
-    for (line in File(inputName).readLines()) {
-        if (map[line] != null) {
-            var tmp = map[line]!!
-            tmp++
-            map[line] = tmp
-        } else map[line] = 1
-    }
-    val max = map.values.maxOrNull()
-    val list = mutableListOf<Int>()
-    for (entry in map.entries) {
-        if (entry.value == max) list.add(entry.key.toInt())
-    }
-    val min = list.minOrNull()
-    for (l in File(inputName).readLines()) {
-        if (l != min.toString()) fileWriter.write(l + "\n")
-    }
-    if (max != null) {
-        for (i in 1..max) {
-            if (min != null) {
-                fileWriter.write(min.toString() + "\n")
+    File(outputName).bufferedWriter().use {
+        val elemToFrequency = mutableMapOf<String, Int>()
+        for (line in File(inputName).readLines()) {
+            if (elemToFrequency[line] != null) {
+                var tmp = elemToFrequency[line]!!
+                tmp++
+                elemToFrequency[line] = tmp
+            } else elemToFrequency[line] = 1
+        }
+        val maxFrequency = elemToFrequency.values.maxOrNull()
+        val maxFrequentElements = mutableListOf<Int>()
+        for (entry in elemToFrequency.entries) {
+            if (entry.value == maxFrequency) maxFrequentElements.add(entry.key.toInt())
+        }
+        val minFromMaxFrequent = maxFrequentElements.minOrNull()
+        for (l in File(inputName).readLines()) {
+            if (l != minFromMaxFrequent.toString()) it.write(l + "\n")
+        }
+        if (maxFrequency != null) {
+            for (i in 1..maxFrequency) {
+                if (minFromMaxFrequent != null) {
+                    it.write(minFromMaxFrequent.toString() + "\n")
+                }
             }
         }
     }
-    fileWriter.close()
 }
 
 /**

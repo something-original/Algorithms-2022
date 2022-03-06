@@ -31,7 +31,6 @@ java {
 
 repositories {
     mavenCentral()
-    jcenter()
     maven {
         url = 'https://maven.polytech.vorpal-research.science'
     }
