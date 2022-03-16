@@ -2,6 +2,9 @@
 
 package lesson2
 
+import kotlin.math.floor
+import kotlin.math.sqrt
+
 /**
  * Получение наибольшей прибыли (она же -- поиск максимального подмассива)
  * Простая
@@ -94,8 +97,29 @@ fun josephTask(menNumber: Int, choiceInterval: Int): Int {
  * Если имеется несколько самых длинных общих подстрок одной длины,
  * вернуть ту из них, которая встречается раньше в строке first.
  */
+//Трудоемкость - O(M*N), ресурсоемкость - O(M*N), где M и N - длины строк
 fun longestCommonSubstring(first: String, second: String): String {
-    TODO()
+    var result = ""
+    if (first == second) return first
+    if (first == "" || second == "") return result
+    val matrix: Array<Array<Int>> = Array(first.length + 1) { Array(second.length + 1) { 0 } }
+    var maxLength = 0
+    var lastIndOfFirstSubstring = 0
+    for (i in 1 until matrix.size) {
+        matrix[i] = Array(second.length + 1) { 0 }
+        for (j in 1 until matrix[i].size) {
+            if (first[i - 1] == second[j - 1]) {
+                if (i != 1 && j != 1) matrix[i][j] = matrix[i - 1][j - 1] + 1
+                else matrix[i][j] = 1
+                if (matrix[i][j] > maxLength) {
+                    maxLength = matrix[i][j]
+                    lastIndOfFirstSubstring = i
+                }
+            }
+        }
+    }
+    if (maxLength != 0) result = first.substring(lastIndOfFirstSubstring - maxLength, lastIndOfFirstSubstring)
+    return result
 }
 
 /**
@@ -108,6 +132,27 @@ fun longestCommonSubstring(first: String, second: String): String {
  * Справка: простым считается число, которое делится нацело только на 1 и на себя.
  * Единица простым числом не считается.
  */
+
+//Трудоемкость -  O(N log(log N)), ресурсоемкость - O(N)
 fun calcPrimesNumber(limit: Int): Int {
-    TODO()
+    var result = 0
+    val sieveErat = Array(limit + 1) { 0 }
+    if (limit <= 1) return 0
+    if (limit == 2) return 1
+
+    for (i in 2..floor(sqrt(limit.toDouble())).toInt()) {
+        if (sieveErat[i] == 0) {
+            var j = i * i
+            while (j <= limit) {
+                sieveErat[j] = 1
+                j += i
+            }
+        }
+    }
+
+    for (i in 2..limit) {
+        if (sieveErat[i] == 1) result++
+    }
+    return result
 }
+
