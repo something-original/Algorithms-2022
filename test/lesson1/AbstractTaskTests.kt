@@ -175,10 +175,12 @@ abstract class AbstractTaskTests : AbstractFileTests() {
             sortTemperatures("input/sortTemperaturesMyTest2", "temp.txt")
             assertFileContent(
                 "temp.txt", """
-                100.0
-                100.0
-                100.01
-                100.1
+                -273.0
+                -0.2
+                0.0
+                0.1
+                273.0
+                500.0
             """.trimIndent()
             )
         } finally {

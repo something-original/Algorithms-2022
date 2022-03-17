@@ -136,22 +136,22 @@ fun longestCommonSubstring(first: String, second: String): String {
 //Трудоемкость -  O(N log(log N)), ресурсоемкость - O(N)
 fun calcPrimesNumber(limit: Int): Int {
     var result = 0
-    val sieveErat = Array(limit + 1) { 0 }
+    val sieveErat = Array(limit + 1) { true }
     if (limit <= 1) return 0
     if (limit == 2) return 1
 
     for (i in 2..floor(sqrt(limit.toDouble())).toInt()) {
-        if (sieveErat[i] == 0) {
+        if (sieveErat[i]) {
             var j = i * i
             while (j <= limit) {
-                sieveErat[j] = 1
+                sieveErat[j] = false
                 j += i
             }
         }
     }
 
     for (i in 2..limit) {
-        if (sieveErat[i] == 1) result++
+        if (sieveErat[i]) result++
     }
     return result
 }

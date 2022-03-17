@@ -125,25 +125,28 @@ fun sortAddresses(inputName: String, outputName: String) {
  * 99.5
  * 121.3
  */
-//Трудоемкость - O(NlogN), ресурсоемкость - O(N)
+//Трудоемкость - O(N), ресурсоемкость - O(N)
 fun sortTemperatures(inputName: String, outputName: String) {
     File(outputName).bufferedWriter().use {
-        val temperatures = mutableListOf<Double>()
-        val x = IllegalArgumentException()
+        val temperaturesPlus = mutableListOf<Int>()
+        val temperaturesMinus = mutableListOf<Int>()
         for (line in File(inputName).readLines()) {
-            try {
-                val temp = line.toDouble()
-                if (temp >= -273.0 && temp <= 500.0) temperatures.add(temp)
-                else throw x
-            } catch (e: IllegalArgumentException) {
-            }
+            val temp = (line.toDouble() * 10).toInt()
+            if (temp >= -2730 && temp < 0) temperaturesMinus.add(-temp)
+            else if (temp in 0..5000) temperaturesPlus.add(temp)
+            else throw IllegalArgumentException()
         }
-        val result = temperatures.sorted()
-        for (tmp in result) {
-            it.write(tmp.toString() + "\n")
+        val resultMinus = countingSort(temperaturesMinus.toIntArray(), 2730)
+        val resultPlus = countingSort(temperaturesPlus.toIntArray(), 5000)
+        for (i in resultMinus.indices) {
+            it.write((-resultMinus[resultMinus.lastIndex - i] / 10.0).toString() + "\n")
+        }
+        for (i in resultPlus.indices) {
+            it.write((resultPlus[i] / 10.0).toString() + "\n")
         }
     }
 }
+
 
 /**
  * Сортировка последовательности
