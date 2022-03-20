@@ -106,7 +106,6 @@ fun longestCommonSubstring(first: String, second: String): String {
     var maxLength = 0
     var lastIndOfFirstSubstring = 0
     for (i in 1 until matrix.size) {
-        matrix[i] = Array(second.length + 1) { 0 }
         for (j in 1 until matrix[i].size) {
             if (first[i - 1] == second[j - 1]) {
                 if (i != 1 && j != 1) matrix[i][j] = matrix[i - 1][j - 1] + 1
@@ -136,22 +135,22 @@ fun longestCommonSubstring(first: String, second: String): String {
 //Трудоемкость -  O(N log(log N)), ресурсоемкость - O(N)
 fun calcPrimesNumber(limit: Int): Int {
     var result = 0
-    val sieveErat = Array(limit + 1) { true }
+    val sieveErat = BooleanArray(limit + 1)
     if (limit <= 1) return 0
     if (limit == 2) return 1
 
     for (i in 2..floor(sqrt(limit.toDouble())).toInt()) {
-        if (sieveErat[i]) {
+        if (!sieveErat[i]) {
             var j = i * i
             while (j <= limit) {
-                sieveErat[j] = false
+                sieveErat[j] = true
                 j += i
             }
         }
     }
 
     for (i in 2..limit) {
-        if (sieveErat[i]) result++
+        if (!sieveErat[i]) result++
     }
     return result
 }
