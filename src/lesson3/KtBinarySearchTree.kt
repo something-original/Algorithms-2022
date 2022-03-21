@@ -11,6 +11,7 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
     ) {
         var left: Node<T>? = null
         var right: Node<T>? = null
+        var parent: Node<T>? = null
     }
 
     private var root: Node<T>? = null
@@ -66,6 +67,9 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
             }
         }
         size++
+        if (closest != null) {
+            newNode.parent = closest
+        }
         return true
     }
 
@@ -82,7 +86,41 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
      * Средняя
      */
     override fun remove(element: T): Boolean {
-        TODO()
+        var result = false
+        if (!contains(element) || this.root == null) return result
+        var elem = find(this.root!!, element)
+        if (elem.left == null && elem.right == null) {
+            if (elem == elem.parent!!.left) elem.parent!!.left = null
+            else if (elem == elem.parent!!.right) elem.parent!!.right = null
+            result = true
+        }
+        if (elem.left == null && elem.right != null) {
+            elem = elem.right!!
+            elem.right = null
+            result = true
+        }
+        if (elem.left != null && elem.right == null) {
+            elem = elem.left!!
+            elem.left = null
+            result = true
+        }
+        if (elem.left != null && elem.right != null) {
+            var currentLeft = elem.right!!.left
+            var tmp: Node<T>? = null
+            if (currentLeft != null) {
+                while (currentLeft != null) {
+                    tmp = currentLeft
+                    currentLeft = currentLeft.left
+                }
+                if (tmp != null) {
+                    elem = tmp
+                    tmp = null
+                }
+                result = true
+            }
+        }
+        size--
+        return result
     }
 
     override fun comparator(): Comparator<in T>? =
