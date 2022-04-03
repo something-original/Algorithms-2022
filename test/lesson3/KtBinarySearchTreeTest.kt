@@ -45,7 +45,7 @@ class KtBinarySearchTreeTest : AbstractBinarySearchTreeTest() {
     }
 
     @Test
-    @Tag("5")//my test
+    @Tag("0")//my test
     fun myIteratorTest() {
         doMyIteratorTest()
     }
@@ -57,7 +57,7 @@ class KtBinarySearchTreeTest : AbstractBinarySearchTreeTest() {
     }
 
     @Test
-    @Tag("8")//my test
+    @Tag("0")//my test
     fun myIteratorRemoveTest() {
         doMyIteratorRemoveTest()
     }
