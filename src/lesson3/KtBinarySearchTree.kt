@@ -1,5 +1,6 @@
 package lesson3
 
+import java.lang.IllegalStateException
 import java.util.*
 import kotlin.NoSuchElementException
 import kotlin.math.max
@@ -103,7 +104,7 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
     //Трудоемкость - O(log(N)), ресурсоемкость - O(1)
     override fun remove(element: T): Boolean {
         val elem = find(element)
-        if (elem == null || elem.value != element) return false
+        if (elem == null || !this.contains(element)) return false
         if (elem.left == null) swap(elem, elem.right)
         else {
             if (elem.right == null) swap(elem, elem.left)
@@ -135,6 +136,20 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
 
     inner class BinarySearchTreeIterator internal constructor() : MutableIterator<T> {
 
+        private val stack = Stack<Node<T>>()
+        var current: Node<T>? = null
+
+        init {
+            addTheNode(root)
+        }
+
+        private fun addTheNode(node: Node<T>?) {
+            if (node != null) {
+                stack.push(node)
+                addTheNode(node.left)
+            }
+        }
+
         /**
          * Проверка наличия следующего элемента
          *
@@ -145,9 +160,9 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
          *
          * Средняя
          */
-        override fun hasNext(): Boolean {
-            TODO()
-        }
+        //Трудоемкость - O(1), ресурсоемкость - O(1)
+        override fun hasNext(): Boolean = stack.isNotEmpty()
+
 
         /**
          * Получение следующего элемента
@@ -162,8 +177,13 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
          *
          * Средняя
          */
+        //Трудоемкость - O(1), ресурсоемкость - O(1)
         override fun next(): T {
-            TODO()
+            if (!hasNext()) throw NoSuchElementException()
+            val node = stack.pop()
+            current = node
+            addTheNode(node.right)
+            return node.value
         }
 
         /**
@@ -178,8 +198,11 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
          *
          * Сложная
          */
+        //Трудоемкость - O(log(N)), ресурсоемкость - O(1)
         override fun remove() {
-            TODO()
+            if (current == null) throw IllegalStateException()
+            remove(current!!.value)
+            current = null
         }
 
     }
