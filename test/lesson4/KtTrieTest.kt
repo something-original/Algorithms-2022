@@ -20,8 +20,8 @@ class KtTrieTest : AbstractTrieTest() {
         doIteratorTest()
     }
 
-    @Test
-    fun myIteratorTest() {//my test
+    @Test//my test
+    fun myIteratorTest() {
         doMyIteratorTest()
     }
 
@@ -31,8 +31,8 @@ class KtTrieTest : AbstractTrieTest() {
         doIteratorRemoveTest()
     }
 
-    @Test
-    fun myIteratorRemoveTest() {//my test
+    @Test//my test
+    fun myIteratorRemoveTest() {
         doMyIteratorRemoveTest()
     }
 }
