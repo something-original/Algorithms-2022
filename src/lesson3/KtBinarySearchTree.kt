@@ -103,8 +103,8 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
 
     //Трудоемкость - O(log(N)), ресурсоемкость - O(1)
     override fun remove(element: T): Boolean {
-        val elem = find(element)
-        if (elem == null || !this.contains(element)) return false
+        val elem = find(element) ?: return false
+        if (elem.value != element) return false
         if (elem.left == null) swap(elem, elem.right)
         else {
             if (elem.right == null) swap(elem, elem.left)
@@ -201,10 +201,31 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
         //Трудоемкость - O(log(N)), ресурсоемкость - O(1)
         override fun remove() {
             if (current == null) throw IllegalStateException()
-            remove(current!!.value)
+            removeCurrent(current!!)
             current = null
         }
 
+        private fun removeCurrent(elem: Node<T>) {
+            if (elem.left == null) swap(elem, elem.right)
+            else {
+                if (elem.right == null) swap(elem, elem.left)
+                if (elem.right != null && elem.left != null) {
+                    var toSwap = elem.right!!
+                    while (toSwap.left != null) {
+                        toSwap = toSwap.left!!
+                    }
+                    if (toSwap != elem.right) {
+                        swap(toSwap, toSwap.right)
+                        toSwap.right = elem.right
+                        toSwap.right!!.parent = toSwap
+                    }
+                    swap(elem, toSwap)
+                    toSwap.left = elem.left
+                    toSwap.left!!.parent = toSwap
+                }
+            }
+            size--
+        }
     }
 
     /**

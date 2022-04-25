@@ -1,5 +1,6 @@
 package lesson4
 
+import java.lang.IllegalStateException
 import java.util.*
 
 /**
@@ -9,6 +10,7 @@ class KtTrie : AbstractMutableSet<String>(), MutableSet<String> {
 
     private class Node {
         val children: SortedMap<Char, Node> = sortedMapOf()
+        var char: Char? = null
     }
 
     private val root = Node()
@@ -47,6 +49,7 @@ class KtTrie : AbstractMutableSet<String>(), MutableSet<String> {
                 current.children[char] = newChild
                 current = newChild
             }
+            current.char = char
         }
         if (modified) {
             size++
@@ -71,7 +74,48 @@ class KtTrie : AbstractMutableSet<String>(), MutableSet<String> {
      * Сложная
      */
     override fun iterator(): MutableIterator<String> {
-        TODO()
+        return TrieIterator()
     }
 
+    inner class TrieIterator : MutableIterator<String> {
+
+        init {
+            iterate(root, "")
+        }
+
+        private var values = ArrayDeque<String>()
+        private var current = ""
+
+        private fun iterate(node: Node, elem: String) {
+            for (child in node.children.entries) {
+                if (child.key != 0.toChar()) {
+                    iterate(child.value, elem + child.key)
+                } else {
+                    values.add(elem)
+                }
+            }
+        }
+
+        //Трудоемкость - O(1), ресурсоемкость - O(1)
+        override fun hasNext(): Boolean {
+            return (values.isNotEmpty())
+        }
+
+        //Трудоемкость - O(1), ресурсоемкость - O(1)
+        override fun next(): String {
+            if (!hasNext()) throw NoSuchElementException()
+            current = values.pop()
+            return current
+        }
+
+        //Трудоемкость - O(N), ресурсоемкость - O(N)
+        override fun remove() {
+            if (current.isNotBlank()) {
+                remove(current)
+                current = ""
+            } else {
+                throw IllegalStateException()
+            }
+        }
+    }
 }
