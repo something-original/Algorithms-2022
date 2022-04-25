@@ -79,12 +79,12 @@ class KtTrie : AbstractMutableSet<String>(), MutableSet<String> {
 
     inner class TrieIterator : MutableIterator<String> {
 
+        private var values = ArrayDeque<String>()
+        private var current = ""
+
         init {
             iterate(root, "")
         }
-
-        private var values = ArrayDeque<String>()
-        private var current = ""
 
         private fun iterate(node: Node, elem: String) {
             for (child in node.children.entries) {
