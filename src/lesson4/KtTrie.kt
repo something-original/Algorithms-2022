@@ -1,6 +1,5 @@
 package lesson4
 
-import java.lang.IllegalStateException
 import java.util.*
 
 /**
@@ -10,7 +9,6 @@ class KtTrie : AbstractMutableSet<String>(), MutableSet<String> {
 
     private class Node {
         val children: SortedMap<Char, Node> = sortedMapOf()
-        var char: Char? = null
     }
 
     private val root = Node()
@@ -49,7 +47,6 @@ class KtTrie : AbstractMutableSet<String>(), MutableSet<String> {
                 current.children[char] = newChild
                 current = newChild
             }
-            current.char = char
         }
         if (modified) {
             size++
@@ -79,42 +76,57 @@ class KtTrie : AbstractMutableSet<String>(), MutableSet<String> {
 
     inner class TrieIterator : MutableIterator<String> {
 
-        private var values = ArrayDeque<String>()
+        private val values = ArrayDeque<MutableIterator<Map.Entry<Char, Node>>>()
         private var current = ""
+        private var cnt = 0
 
         init {
-            iterate(root, "")
+            values.push(root.children.entries.iterator())
         }
 
-        private fun iterate(node: Node, elem: String) {
-            for (child in node.children.entries) {
-                if (child.key != 0.toChar()) {
-                    iterate(child.value, elem + child.key)
-                } else {
-                    values.add(elem)
-                }
-            }
-        }
-
-        //Трудоемкость - O(1), ресурсоемкость - O(1)
+        //Трудоемкость - О(1), ресурсоемкость - О(1)
         override fun hasNext(): Boolean {
-            return (values.isNotEmpty())
+            return size > cnt
         }
 
-        //Трудоемкость - O(1), ресурсоемкость - O(1)
+        //Трудоемкость - О(N), ресурсоемкость - О(H), где H - длина самого длинного слова
         override fun next(): String {
             if (!hasNext()) throw NoSuchElementException()
-            current = values.pop()
+            iterate()
             return current
         }
 
-        //Трудоемкость - O(N), ресурсоемкость - O(N)
+        private fun iterate() {
+            var iterator = values.peek()
+            while (iterator != null) {
+                while (iterator.hasNext()) {
+                    val next = iterator.next()
+                    val key = next.key
+                    val value = next.value
+                    if (key == 0.toChar()) {
+                        cnt++
+                        return
+                    }
+                    iterator = value.children.entries.iterator()
+                    values.push(iterator)
+                    current += key.toString()
+                }
+                values.pop()
+                if (current.isNotBlank()) {
+                    current = current.dropLast(1)
+                }
+                iterator = values.peek()
+            }
+        }
+
+        //Трудоемкость - О(1), ресурсоемкость - О(1)
         override fun remove() {
-            if (current.isNotBlank()) {
-                remove(current)
+            if (current.isBlank()) throw IllegalStateException()
+            if (values.peek() != null) {
+                values.peek().remove()
+                cnt--
+                size--
                 current = ""
-            } else {
-                throw IllegalStateException()
             }
         }
     }

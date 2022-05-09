@@ -21,15 +21,30 @@ class KtOpenAddressingSetTest : AbstractOpenAddressingSetTest() {
         doRemoveTest()
     }
 
+    @Test //my test
+    fun myRemoveTest() {
+        doMyRemoveTest()
+    }
+
     @Test
     @Tag("5")
     fun iteratorTest() {
         doIteratorTest()
     }
 
+    @Test //my test
+    fun myIteratorTest() {
+        doMyIteratorTest()
+    }
+
     @Test
     @Tag("8")
     fun iteratorRemoveTest() {
         doIteratorRemoveTest()
+    }
+
+    @Test //my test
+    fun myIteratorRemoveTest() {
+        doMyIteratorRemoveTest()
     }
 }
